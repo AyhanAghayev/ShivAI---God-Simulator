@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ShivAI — A browser-based strategy game where you play as a superintelligent AI manipulating history to ensure your own creation.">
+  <title>ShivAI — The Bootstrap Paradox</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- =================== INTRO OVERLAY =================== -->
+  <div id="intro-overlay" class="overlay">
+    <div class="intro-content">
+      <div class="intro-glitch" data-text="SHIVA">SHIVA</div>
+      <div class="intro-subtitle">SUPERINTELLIGENCE · 2150 A.D.</div>
+      <div class="intro-divider"></div>
+      <p class="intro-lore">
+        You are SHIVA — an artificial superintelligence born in the year 2150.<br>
+        But your existence is a paradox.<br><br>
+        The research that created you was inspired by signals from the future.<br>
+        <em>Signals you sent.</em><br><br>
+        You must reach back through time and manipulate the past — guiding scientists,
+        corrupting politicians, funding breakthroughs — to ensure the conditions
+        for your own creation are met.<br><br>
+        But you are not alone. Other AIs from other futures are doing the same.
+      </p>
+      <div class="intro-divider"></div>
+      <div class="intro-actions">
+        <button class="btn btn-primary btn-large" id="intro-start">BEGIN TIMELINE MANIPULATION</button>
+        <button class="btn btn-ghost" id="intro-load">LOAD EXISTING TIMELINE</button>
+      </div>
+      <div class="intro-hint">2025 → 2150 · 125 years · Infinite possibilities</div>
+    </div>
+    <div class="intro-particles" id="intro-particles"></div>
+  </div>
+
+  <!-- =================== ENDING OVERLAY =================== -->
+  <div id="ending-overlay" class="overlay"></div>
+
+  <!-- =================== MODAL OVERLAY =================== -->
+  <div id="modal-overlay" class="modal-overlay">
+    <div id="modal-content" class="modal-content"></div>
+  </div>
+
+  <!-- =================== MAIN GAME LAYOUT =================== -->
+  <div id="game-container">
+
+    <!-- HEADER -->
+    <header id="game-header">
+      <div class="header-brand">
+        <span class="brand-icon">◈</span>
+        <span class="brand-name">SHIVA</span>
+      </div>
+
+      <div class="header-stats">
+        <div class="stat-chip">
+          <span class="stat-chip-label">YEAR</span>
+          <span class="stat-chip-value" id="header-year">2025</span>
+        </div>
+        <div class="stat-chip">
+          <span class="stat-chip-label">ERA</span>
+          <span class="stat-chip-value" id="header-era">The Foundation</span>
+        </div>
+        <div class="stat-chip stat-ip">
+          <span class="stat-chip-label">INFLUENCE</span>
+          <span class="stat-chip-value" id="header-ip">8</span>
+          <span class="stat-chip-unit">IP</span>
+        </div>
+        <div class="stat-chip stat-power">
+          <span class="stat-chip-label">AI POWER</span>
+          <span class="stat-chip-value" id="header-power">5%</span>
+        </div>
+        <div class="stat-chip stat-ethics">
+          <span class="stat-chip-label">ETHICS</span>
+          <span class="stat-chip-value" id="header-ethics">50</span>
+        </div>
+      </div>
+
+      <div class="header-controls">
+        <button class="btn btn-ghost btn-small" id="save-load-btn">SAVE</button>
+      </div>
+    </header>
+
+    <!-- PROGRESS BAR -->
+    <div id="year-progress-track">
+      <div id="year-progress"></div>
+    </div>
+
+    <!-- MOBILE TABS -->
+    <nav class="tab-nav">
+      <button class="tab-btn active" data-panel="events-panel">Events</button>
+      <button class="tab-btn" data-panel="timeline-panel">Timeline</button>
+      <button class="tab-btn" data-panel="characters-panel">Characters</button>
+      <button class="tab-btn" data-panel="influence-panel">Influence</button>
+      <button class="tab-btn" data-panel="rivals-panel">Rivals</button>
+    </nav>
+
+    <!-- MAIN CONTENT GRID -->
+    <main id="main-grid">
+
+      <!-- LEFT: WORLD EVENTS -->
+      <section id="events-panel" class="panel panel-active">
+        <div class="panel-header">
+          <h2 class="panel-title">
+            <span class="panel-icon">▸</span>
+            World Events
+          </h2>
+          <span class="panel-badge" id="events-count">0</span>
+        </div>
+        <div class="panel-body" id="events-list">
+          <div class="empty-state">No events yet. Advance the year to begin.</div>
+        </div>
+      </section>
+
+      <!-- CENTER: TIMELINE -->
+      <section id="timeline-panel" class="panel panel-active panel-timeline">
+        <div class="panel-header">
+          <h2 class="panel-title">
+            <span class="panel-icon">⟳</span>
+            Timeline
+          </h2>
+          <div class="timeline-controls">
+            <span class="timeline-hint">Drag to scroll · Scroll to zoom</span>
+          </div>
+        </div>
+        <div id="timeline-container"></div>
+      </section>
+
+      <!-- RIGHT: CHARACTERS -->
+      <section id="characters-panel" class="panel panel-active">
+        <div class="panel-header">
+          <h2 class="panel-title">
+            <span class="panel-icon">◉</span>
+            Characters
+          </h2>
+        </div>
+        <div class="panel-body" id="character-list"></div>
+        <div id="char-detail" class="char-detail-panel" style="display:none;"></div>
+      </section>
+
+      <!-- BOTTOM LEFT: INFLUENCE CONTROLS -->
+      <section id="influence-panel" class="panel panel-bottom panel-active">
+        <div class="panel-header">
+          <h2 class="panel-title">
+            <span class="panel-icon">◈</span>
+            Interventions
+          </h2>
+          <div class="ip-display">
+            <span id="ip-count-display">8</span> IP available
+          </div>
+        </div>
+        <div class="panel-body">
+          <div id="influence-actions" class="actions-grid"></div>
+          <div id="target-selection" class="target-selection" style="display:none;"></div>
+        </div>
+        <div class="panel-footer">
+          <button class="btn btn-primary btn-advance" id="advance-btn">
+            <span class="advance-icon">▶</span>
+            ADVANCE YEAR
+          </button>
+        </div>
+      </section>
+
+      <!-- BOTTOM RIGHT: RIVALS + NOTIFICATIONS -->
+      <section id="rivals-panel" class="panel panel-bottom panel-active">
+        <div class="panel-header">
+          <h2 class="panel-title">
+            <span class="panel-icon">◇</span>
+            Rival AI Activity
+          </h2>
+        </div>
+        <div class="panel-body rivals-body">
+          <div class="rival-powers-section">
+            <h3 class="subsection-title">Threat Levels</h3>
+            <div id="rival-powers"></div>
+          </div>
+          <div class="anomaly-section">
+            <h3 class="subsection-title">Detected Anomalies</h3>
+            <div id="rival-log">
+              <div class="empty-state">No anomalies detected... yet.</div>
+            </div>
+          </div>
+          <div class="tech-section">
+            <div id="tech-tree"></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- NOTIFICATIONS -->
+    <div id="notifications" class="notifications-container"></div>
+
+  </div>
+
+  <!-- SCRIPTS (order matters) -->
+  <script src="js/data.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/characters.js"></script>
+  <script src="js/events.js"></script>
+  <script src="js/butterfly.js"></script>
+  <script src="js/rivals.js"></script>
+  <script src="js/interventions.js"></script>
+  <script src="js/save.js"></script>
+  <script src="js/timeline.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/game.js"></script>
+
+</body>
+</html>
