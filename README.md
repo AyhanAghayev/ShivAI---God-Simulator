@@ -16,6 +16,8 @@ ShivAI is a browser-based strategy game where you play as a superintelligent AI 
 
 ## How to Play
 
+*For an in-depth guide on scenarios and tips, check out the [Official Walkthrough & Strategy Guide](WALKTHROUGH.md).*
+
 ### Objective
 Your goal is to reach **100% AI Power** by the year 2150 to ensure your own creation. If your power is too low, you will never exist. If your paradox count gets too high (5), the timeline collapses. Different endings are achieved depending on your AI Power, Tech Progress, and Player Ethics.
 
