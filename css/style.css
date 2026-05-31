@@ -704,6 +704,53 @@ html, body {
 }
 
 /* ============================================================
+   PREDICTION MARKETS
+   ============================================================ */
+
+.panel-toggle {
+  display: flex; background: var(--bg-dark); border-radius: 6px; overflow: hidden; border: 1px solid var(--border);
+}
+.toggle-btn {
+  flex: 1; padding: 4px 12px; background: transparent; border: none; color: var(--text-secondary);
+  font-family: var(--font); font-size: 11px; cursor: pointer; transition: all 0.2s;
+}
+.toggle-btn.active {
+  background: var(--blue); color: var(--bg-deep); font-weight: 600;
+}
+
+.markets-list {
+  display: flex; flex-direction: column; gap: 8px;
+}
+.market-card {
+  background: var(--bg-dark); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 10px;
+}
+.market-target {
+  display: flex; justify-content: space-between; margin-bottom: 8px;
+}
+.market-target-name { font-size: 13px; font-weight: 600; }
+.market-status { font-size: 10px; color: var(--text-dim); }
+
+.market-pools {
+  display: flex; gap: 8px; margin-bottom: 8px;
+}
+.market-pool {
+  flex: 1; background: rgba(255,255,255,0.03); padding: 6px; border-radius: 4px;
+  text-align: center; border: 1px solid rgba(255,255,255,0.05);
+}
+.market-pool.alive { border-color: rgba(48, 209, 88, 0.2); }
+.market-pool.dead { border-color: rgba(255, 45, 85, 0.2); }
+
+.pool-label { font-size: 10px; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 2px; }
+.pool-amount { font-size: 12px; font-weight: bold; color: var(--gold); }
+.pool-payout { font-size: 9px; color: var(--text-dim); margin-top: 2px; }
+
+.market-actions {
+  display: flex; gap: 6px;
+}
+.market-actions .btn { flex: 1; padding: 6px; font-size: 11px; }
+
+/* ============================================================
    RESPONSIVE — Mobile
    ============================================================ */
 

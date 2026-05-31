@@ -20,6 +20,21 @@ const UI = {
         this.switchMobilePanel(panel);
       });
     });
+
+    // Toggle for Interventions / Markets
+    document.querySelectorAll('#influence-tabs .toggle-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        document.querySelectorAll('#influence-tabs .toggle-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('interventions-view').style.display = btn.dataset.target === 'interventions-view' ? 'block' : 'none';
+        document.getElementById('markets-view').style.display = btn.dataset.target === 'markets-view' ? 'block' : 'none';
+      });
+    });
+
+    // Open Market target selection
+    document.getElementById('new-market-btn')?.addEventListener('click', () => {
+      this.showMarketTargetSelection(Game.state);
+    });
   },
 
   switchMobilePanel(panelId) {
@@ -298,6 +313,115 @@ const UI = {
     this.updateInfluenceControls(gameState);
     this.updateCharacterList(gameState.characters);
     Timeline.render(gameState);
+  },
+
+  showMarketTargetSelection(gameState) {
+    const container = document.getElementById('new-market-form');
+    if (!container) return;
+
+    // Any alive character that doesn't already have an unresolved market
+    const validTargets = gameState.characters.filter(c => c.alive && !(gameState.markets || []).some(m => m.targetId === c.id && !m.resolved));
+    validTargets.sort((a, b) => b.stats.influence - a.stats.influence);
+
+    container.style.display = 'block';
+    container.innerHTML = `
+      <div class="target-header">
+        <h4>Open Market On...</h4>
+        <button class="close-btn" id="close-market-target">&times;</button>
+      </div>
+      <div class="target-list">
+        ${validTargets.slice(0, 30).map(t => `
+          <div class="target-item" data-id="${t.id}">
+            <div class="target-info">
+              <span class="target-icon">${t.icon}</span>
+              <div>
+                <div class="target-name">${t.name}</div>
+                <div class="target-subtitle">${t.professionLabel} • INF ${t.stats.influence}</div>
+              </div>
+            </div>
+            <div class="market-target-actions" style="display:flex;gap:4px;margin-top:6px;">
+              <button class="btn btn-small btn-primary open-market-btn" data-id="${t.id}" data-type="alive">Bet Alive (5 IP)</button>
+              <button class="btn btn-small btn-primary open-market-btn" data-id="${t.id}" data-type="dead">Bet Dead (5 IP)</button>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+
+    document.getElementById('close-market-target').addEventListener('click', () => {
+      container.style.display = 'none';
+    });
+
+    container.querySelectorAll('.open-market-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const res = Market.createMarket(btn.dataset.id, gameState.year, btn.dataset.type, 5, 'player', gameState);
+        if (res.success) {
+          this.addNotification(res.message, 'success');
+          container.style.display = 'none';
+          this.refreshAll(gameState);
+        } else {
+          this.addNotification(res.message, 'error');
+        }
+      });
+    });
+  },
+
+  updateMarkets(gameState) {
+    const container = document.getElementById('markets-list');
+    if (!container) return;
+
+    container.innerHTML = '';
+    const activeMarkets = (gameState.markets || []).filter(m => !m.resolved);
+
+    if (activeMarkets.length === 0) {
+      container.innerHTML = '<div class="empty-state">No active markets.</div>';
+      return;
+    }
+
+    for (const market of activeMarkets) {
+      const el = document.createElement('div');
+      el.className = 'market-card';
+      
+      const payoutAlive = Market.getPayoutRatio(market, 'alive').toFixed(1);
+      const payoutDead = Market.getPayoutRatio(market, 'dead').toFixed(1);
+
+      el.innerHTML = `
+        <div class="market-target">
+          <span class="market-target-name">${market.targetName}</span>
+          <span class="market-status">Resolves Year End</span>
+        </div>
+        <div class="market-pools">
+          <div class="market-pool alive">
+            <div class="pool-label">Alive</div>
+            <div class="pool-amount">${market.poolAlive} IP</div>
+            <div class="pool-payout">${payoutAlive}x payout</div>
+          </div>
+          <div class="market-pool dead">
+            <div class="pool-label">Dead</div>
+            <div class="pool-amount">${market.poolDead} IP</div>
+            <div class="pool-payout">${payoutDead}x payout</div>
+          </div>
+        </div>
+        <div class="market-actions">
+          <button class="btn btn-small bet-btn" data-id="${market.id}" data-type="alive">Bet Alive (1 IP)</button>
+          <button class="btn btn-small bet-btn" data-id="${market.id}" data-type="dead">Bet Dead (1 IP)</button>
+        </div>
+      `;
+
+      el.querySelectorAll('.bet-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const res = Market.placeBet(btn.dataset.id, btn.dataset.type, 1, 'player', gameState);
+          if (res.success) {
+            this.addNotification(res.message, 'success');
+            this.refreshAll(gameState);
+          } else {
+            this.addNotification(res.message, 'error');
+          }
+        });
+      });
+
+      container.appendChild(el);
+    }
   },
 
   // --- Rival AI Activity Log ---
@@ -641,12 +765,12 @@ const UI = {
     overlay.classList.add('show');
   },
 
-  // --- Full UI Refresh ---
   refreshAll(gameState) {
     this.updateHeader(gameState);
     this.updateWorldEvents(gameState.allEvents, gameState);
     this.updateCharacterList(gameState.characters);
     this.updateInfluenceControls(gameState);
+    this.updateMarkets(gameState);
     this.updateRivalLog(gameState.anomalies);
     this.updateRivalPowers();
     this.updateTechTree(gameState.worldState.techProgress || 0);

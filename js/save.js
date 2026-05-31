@@ -32,6 +32,7 @@ const SaveSystem = {
         rivalStates: Rivals.serialize(),
         interventionHistory: Interventions.serialize(),
         anomalies: gameState.anomalies || [],
+        markets: gameState.markets || [],
         notifications: []
       }
     };
@@ -142,6 +143,7 @@ const SaveSystem = {
         rivalStates: Rivals.serialize(),
         interventionHistory: Interventions.serialize(),
         anomalies: gameState.anomalies || [],
+        markets: gameState.markets || [],
         notifications: []
       }
     };

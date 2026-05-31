@@ -24,6 +24,7 @@ const Game = {
         ethics: 50
       },
       anomalies: [],
+      markets: [],
       paradoxCount: 0,
       dilemmasTriggered: [],
       playerEthics: 50,
@@ -84,6 +85,11 @@ const Game = {
     const year = this.state.year;
 
     UI.addNotification(`Year ${year} begins...`, 'info');
+
+    // 0. Evaluate Assassinations based on Prediction Markets
+    if (typeof Market !== 'undefined') {
+      Market.evaluateAssassinations(this.state);
+    }
 
     // 1. Age characters, handle deaths
     const { deaths, retirements } = Characters.ageCharacters(this.state.characters, year);
@@ -182,6 +188,11 @@ const Game = {
       return;
     }
 
+    // 11.5 Resolve Markets
+    if (typeof Market !== 'undefined') {
+      Market.resolveMarkets(this.state);
+    }
+
     // 12. Auto-save every 10 years
     if (year % 10 === 0) {
       SaveSystem.autoSave(this.state);
@@ -261,6 +272,7 @@ const Game = {
       playerEthics: s.playerEthics || 50,
       aiPower: s.aiPower || 0,
       anomalies: s.anomalies || [],
+      markets: s.markets || [],
       gameOver: false,
       ending: null
     };

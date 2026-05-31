@@ -34,6 +34,29 @@ const Rivals = {
 
       // IP scales with era
       const ip = 3 + era.id * 2 + Math.floor(state.power / 20);
+      
+      // Maybe interact with prediction markets
+      if (typeof Market !== 'undefined' && Utils.roll(30)) {
+        const playerSupporters = characters.filter(c => c.alive && c.manipulatedBy.some(m => m.by === 'player'));
+        if (playerSupporters.length > 0) {
+          const target = Utils.pick(playerSupporters);
+          let market = gameState.markets ? gameState.markets.find(m => m.targetId === target.id && !m.resolved) : null;
+          const betAmount = Utils.randomInt(5, 15);
+          
+          if (!market) {
+             Market.createMarket(target.id, year, 'alive', betAmount, rival.id, gameState);
+             anomalies.push({
+               id: Utils.uuid(), year, rivalId: rival.id, rivalName: rival.name,
+               rivalIcon: DATA.rivals.find(r => r.id === rival.id)?.icon || '[?]',
+               text: `[!] Suspicious market activity detected on ${target.name}'s survival`,
+               targetName: target.name, actionType: 'market_open', read: false
+             });
+          } else {
+             Market.placeBet(market.id, 'alive', betAmount, rival.id, gameState);
+          }
+        }
+      }
+
       const numActions = Utils.randomInt(1, Math.min(3, Math.floor(ip / 2)));
 
       for (let i = 0; i < numActions; i++) {

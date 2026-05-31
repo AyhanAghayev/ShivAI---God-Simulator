@@ -145,17 +145,28 @@
       <!-- BOTTOM LEFT: INFLUENCE CONTROLS -->
       <section id="influence-panel" class="panel panel-bottom panel-active">
         <div class="panel-header">
-          <h2 class="panel-title">
-            <span class="panel-icon">◈</span>
-            Interventions
-          </h2>
+          <div class="panel-toggle" id="influence-tabs">
+            <button class="toggle-btn active" data-target="interventions-view">Interventions</button>
+            <button class="toggle-btn" data-target="markets-view">Markets</button>
+          </div>
           <div class="ip-display">
             <span id="ip-count-display">8</span> IP available
           </div>
         </div>
         <div class="panel-body">
-          <div id="influence-actions" class="actions-grid"></div>
-          <div id="target-selection" class="target-selection" style="display:none;"></div>
+          <div id="interventions-view">
+            <div id="influence-actions" class="actions-grid"></div>
+            <div id="target-selection" class="target-selection" style="display:none;"></div>
+          </div>
+          <div id="markets-view" style="display:none;">
+            <div class="markets-header">
+              <button class="btn btn-small btn-ghost" id="new-market-btn" style="width:100%; margin-bottom: 8px;">+ Open Prediction Market</button>
+            </div>
+            <div id="markets-list" class="markets-list">
+              <div class="empty-state">No active markets.</div>
+            </div>
+            <div id="new-market-form" class="target-selection" style="display:none;"></div>
+          </div>
         </div>
         <div class="panel-footer">
           <button class="btn btn-primary btn-advance" id="advance-btn">
@@ -205,6 +216,7 @@
   <script src="js/butterfly.js"></script>
   <script src="js/rivals.js"></script>
   <script src="js/interventions.js"></script>
+  <script src="js/market.js"></script>
   <script src="js/save.js"></script>
   <script src="js/timeline.js"></script>
   <script src="js/ui.js"></script>
